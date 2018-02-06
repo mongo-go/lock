@@ -40,44 +40,49 @@ Here is an example of how to use this package:
 package main
 
 import (
-        "log"
+	"log"
 
-        "github.com/mongo-go/lock"
+	"github.com/mongo-go/lock"
 	"gopkg.in/mgo.v2"
 )
 
 func main() {
-        // Create a Mongo session and set the write mode to "majority".
-        mongoUrl := "youMustProvideThis"
-        session, err := mgo.Dial(mongoUrl)
-        if err != nil {
-                log.Fatal(err)
-        }
-        session.SetSafe(&mgo.Safe{WMode: "majority"})
+	// Create a Mongo session and set the write mode to "majority".
+	mongoUrl := "youMustProvideThis"
+	database := "dbName"
+	collection := "collectionName"
 
-        // Create a MongoDB lock client.
-        c := lock.NewClient(session, "dbName", "collectionName")
+	session, err := mgo.Dial(mongoUrl)
+	if err != nil {
+		log.Fatal(err)
+	}
+	session.SetSafe(&mgo.Safe{WMode: "majority"})
 
-        lockId := "abcd1234"
+	// Create a MongoDB lock client.
+	c := lock.NewClient(session, database, collection)
 
-        // Create an exclusive lock on resource1.
-        err := c.XLock("resource1", lockId, lock.LockDetails{})
-        if err != nil {
-                log.Fatal(err)
-        }
+	lockId := "abcd1234"
 
-        // Create a shared lock on resource2.
-        err := c.SLock("resource2", lockId, lock.LockDetails{}, -1)
-        if err != nil {
-                log.Fatal(err)
-        }
+	// Create an exclusive lock on resource1.
+	err = c.XLock("resource1", lockId, lock.LockDetails{})
+	if err != nil {
+		log.Fatal(err)
+	}
 
-        // Unlock all locks that have our lockId.
-        unlocked, err := ic.Unlock(lockId)
-        if err != nil {
-                log.Fatal(err)
-        }
+	// Create a shared lock on resource2.
+	err = c.SLock("resource2", lockId, lock.LockDetails{}, -1)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	// Unlock all locks that have our lockId.
+	_, err = c.Unlock(lockId)
+	if err != nil {
+		log.Fatal(err)
+	}
 }
+
+
 ```
 
 ## How It Works

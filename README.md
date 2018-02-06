@@ -42,7 +42,7 @@ package main
 import (
 	"log"
 
-	"github.com/smartinov/mongo-lock/lock"
+	"github.com/mongo-go/lock"
 	"gopkg.in/mgo.v2"
 )
 
